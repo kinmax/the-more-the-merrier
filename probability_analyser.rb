@@ -219,10 +219,10 @@ end
 
 landmark_avg = landmark_avg.to_f/candidates.length.to_f
 
-best = goals_percents.max_by{|k,v| v}
+best = pgo.max_by{|k,v| v}
 recognized.push(best[0])
-goals_percents.keys.each do |goal|
-    if goals_percents[goal] >= (best[1] - (best[1]*(threshold/100.0))) && goal != best[0]
+pgo.keys.each do |goal|
+    if pgo[goal] >= (best[1] - (best[1]*(threshold/100.0))) && goal != best[0]
         recognized.push(goal)
     end
 end
@@ -247,25 +247,16 @@ puts "PROBABILITIES:"
 puts "#####"
 pgo_by_prob = pgo.sort_by{|k, v| v}.reverse
 pgo_by_prob.each do |prob|
-    puts "#{prob[0]}####{prob[1]}"
+    if recognized.include?(prob[0])
+        puts "#{prob[0]}####{prob[1]} - REGOGNIZED"
+    else
+        puts "#{prob[0]}####{prob[1]}"
+    end
 end
 puts "#####"
-prob_correct = false # is probability correct?
-correct_positions = 0
-goals_percents_by_score = goals_percents.sort_by{ |k,v| v }.reverse
-pgo_by_prob.each_with_index do |prob, index|
-    correct_positions += 1 if prob[0] == goals_percents_by_score[index][0]
-end
-prob_correct = correct_positions == goals_percents_by_score.length && correct_positions == pgo_by_prob.length
-
-prob_correct_string = prob_correct ? "PROBABILITY_CORRECT-TRUE" : "PROBABILITY_CORRECT-FALSE"
-puts prob_correct_string
-
-sum = 0
-pgo_by_prob.each do |prob|
-    sum += prob[1]
-end
 puts "REAL GOAL: #{real_goal}"
+system("rm ./output.txt")
+system("rm *.pddl *.dat")
 # puts sum
 
 
