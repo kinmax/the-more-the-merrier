@@ -43,14 +43,31 @@ samples.times do |sample|
     probs = output.split("#####")[1].strip
     probs = probs.split("\n")
     best = probs.first.split("###")[0].strip.downcase
+    recognized = []
     correct = output.split("CORRECT-")[1].split("\n")[0] == "TRUE"
-    counter[best] += 1 if correct
+    # comment out 2 of the following 3 blocks according to your needs
+    # BLOCK 1 - adds 1 to every goal in recognized list
+    probs.each do |prob|
+        if(prob.include?("RECOGNIZED") && correct)
+            counter[prob.split("###")[0]] += 1
+        end
+    end
+    # BLOCK 2 - adds one to the single best goal
+    # counter[best] += 1 if correct 
+    # BLOCK 3 - uses each goal's probability to form the priors
+    # if correct
+    #     probs.each do |prob|
+    #         goal = prob.split("###")[0]
+    #         probability = prob.split("###")[1].to_f
+    #         counter[goal] += probability*100
+    #     end
+    # end
     hyps.each do |hyp|
         next_priors[hyp] = ((counter[hyp] + k_value).to_f)/((counter.values.sum + (hyps.length * k_value)).to_f)
     end
     File.open("./priors.dat", "w") do |file|
-        hyps.each do |hyp|
-            string_to_print = "#{hyp} ### #{next_priors[hyp]}\n"
+        next_priors.sort_by {|k, v| v}.reverse.each do |p|
+            string_to_print = "#{p[0]} ### #{p[1]}}\n"
             file.puts(string_to_print)
         end
     end

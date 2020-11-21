@@ -248,7 +248,7 @@ puts "#####"
 pgo_by_prob = pgo.sort_by{|k, v| v}.reverse
 pgo_by_prob.each do |prob|
     if recognized.include?(prob[0])
-        puts "#{prob[0]}####{prob[1]} - REGOGNIZED"
+        puts "#{prob[0]}####{prob[1]} - RECOGNIZED"
     else
         puts "#{prob[0]}####{prob[1]}"
     end
