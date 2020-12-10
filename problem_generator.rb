@@ -59,6 +59,11 @@ def select_goal(probs)
     return cands.last
 end
 
+if ARGV.length < 5
+    puts "Usage: ruby problem_generator.rb <tar_path> <probabilistic_distribution> <number_of_samples> <observation_level> <samples_folder_path>"
+    exit
+end
+
 tar_path = ARGV[0]
 system("tar -xjf #{tar_path}")
 
@@ -70,6 +75,8 @@ raise "Invalid number of samples! Must be greater than 0" if number_of_samples <
 
 observation_level = ARGV[3].to_i
 raise "Invalid observation level! Must be an integer i where 0 <= i <= 100" if observation_level < 0 || observation_level > 100
+
+samples_path = ARGV[4]
 
 hyps_file = File.open("./hyps.dat", "r")
 hyps = hyps_file.read
@@ -102,11 +109,9 @@ real_hyp.strip!
 
 probabilities = {}
 
-system("rm -rf ./samples")
-system("mkdir ./samples")
+system("rm -rf #{samples_path}")
+system("mkdir #{samples_path}")
 
-new_path = "./samples"
-system("mkdir #{new_path}")
 case(probabilistic_distribution)
 when "uniform" 
     probabilities = uniform_distribution(candidates)
@@ -119,7 +124,7 @@ end
 number_of_samples.times do |i|
     system("tar -xjf #{tar_path}")
     puts "Generating problem #{i}"
-    new_problem_path = "#{new_path}/problem_#{i}"
+    new_problem_path = "#{samples_path}/problem_#{i}"
     system("mkdir #{new_problem_path}")
     system("cp ./domain.pddl #{new_problem_path}")
     system("cp ./template.pddl #{new_problem_path}")
@@ -128,10 +133,10 @@ number_of_samples.times do |i|
     problem = template.gsub("<hypothesis>", goal.gsub(",", " "))
     observation_level
     output_path = "#{new_problem_path}/problem.pddl"
-    File.write(output_path, problem)
-    cmd = "python3 ./real-fd/fast-downward.py #{new_problem_path}/domain.pddl #{new_problem_path}/problem.pddl --landmarks \"lm=lm_exhaust(reasonable_orders=false, only_causal_landmarks=false, disjunctive_landmarks=false, conjunctive_landmarks=true, no_orders=false)\" --heuristic \"hlm=lmcount(lm)\" --search \"astar(lmcut())\" > ./output.txt"
+    File.write(output_path, problem)    
+    cmd = "python3 ./real-fd/fast-downward.py #{new_problem_path}/domain.pddl #{new_problem_path}/problem.pddl --evaluator \"hff=ff()\" --evaluator \"hcea=cea()\" --search \"lazy_greedy([hff, hcea], preferred=[hff, hcea])\"  > ./output_#{probabilistic_distribution}.txt"
     system(cmd)
-    plan_file = File.open("./output.txt")
+    plan_file = File.open("./output_#{probabilistic_distribution}.txt")
     plan = plan_file.read
     plan_file.close
     plan = plan.split("\n")
@@ -143,7 +148,7 @@ number_of_samples.times do |i|
     end
     plan = plan[start..finish]
     plan.map {|action| action.gsub!(" (1)", "").strip!}
-    number_of_actions = (plan.length.to_f * (observation_level.to_f/100.to_f)).round
+    number_of_actions = (plan.length.to_f * (observation_level.to_f/100.to_f)).ceil
     indexes_to_add = []
     while indexes_to_add.length < number_of_actions do
         r = rand(plan.length)
@@ -165,15 +170,15 @@ number_of_samples.times do |i|
     system("tar -cjf ./problem_#{i}.tar.bz2 ./*.pddl ./*.dat")
     system("rm -rf ./*.pddl ./*.dat")
     system("rm -rf #{new_problem_path}")
-    system("mv problem_#{i}.tar.bz2 #{new_path}")
+    system("mv problem_#{i}.tar.bz2 #{samples_path}")
     system("rm -rf ./problem_#{i}")
 end
 distribution_string = ""
 probabilities.each do |key, value|
-    distribution_string += "#{key} ### #{value}\n"
+    distribution_string += "#{key} = #{value}\n"
 end
-distribution_path = "#{new_path}/distribution.txt"
+distribution_path = "#{samples_path}/distribution.txt"
 File.write(distribution_path, distribution_string)
 
-system("cp -r #{tar_path} ./samples")
-system("mv ./samples/#{tar_path.split("/").last} ./samples/original_problem.tar.bz2")
+system("cp -r #{tar_path} #{samples_path}")
+system("mv #{samples_path}/#{tar_path.split("/").last} #{samples_path}/original_problem.tar.bz2")

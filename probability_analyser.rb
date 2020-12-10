@@ -3,6 +3,11 @@ require 'byebug'
 
 start = Process.clock_gettime(Process::CLOCK_MONOTONIC)
 
+if(ARGV.size != 3)
+    puts "Usage: ruby probability_analyser.rb <tar path> <threshold> <extraction method>"
+    exit
+end
+
 tar_path = ARGV[0]
 system("tar -xjf #{tar_path}")
 
@@ -117,11 +122,11 @@ if has_priors
     priors_string = priors_file.read
     priors_split = priors_string.split("\n")
     priors_split.each do |p_str|
-        priors[p_str.split("###")[0].strip.downcase] = p_str.split("###")[1].strip.to_f
+        priors[p_str.split(" = ")[0].strip.downcase] = p_str.split(" = ")[1].strip.to_f
     end
 else
     candidates.each do |c|
-        priors[c] = 1.to_f
+        priors[c] = 1.to_f/hyps.length.to_f
     end
 end
 
@@ -257,7 +262,8 @@ puts "#####"
 puts "REAL GOAL: #{real_goal}"
 system("rm ./output.txt")
 system("rm *.pddl *.dat")
-# puts sum
+sum = pgo.values.sum
+puts sum
 
 
 # puts "#"*50
