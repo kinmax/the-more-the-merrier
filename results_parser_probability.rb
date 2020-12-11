@@ -105,7 +105,7 @@ def all_results(domain, type, distribution)
                         system("ruby problem_generator.rb #{tar} #{distribution} #{number_of_samples} #{percent} #{samples_path} > /dev/null")
                         system("ruby #{run_path} #{samples_path} > /dev/null")
                         system("cp #{samples_path}/original_problem.tar.bz2 ./")
-                        system("java -jar probabilistic-recognizer-landmarks0.5.jar original_problem_priors.tar.bz2 > /dev/null")
+                        system("java -jar probabilistic-recognizer-landmarks0.5.jar original_problem.tar.bz2 > /dev/null")
                         res_file_name = "original_problem.txt"
                         result_original = get_method_stats(res_file_name)
                         system("rm original_problem.tar.bz2 original_problem.txt")
@@ -147,7 +147,7 @@ def all_results(domain, type, distribution)
                         raw_distro.split("\n").each do |d|
                             distro[d.split(" = ")[0]] = d.split(" = ")[1].to_f
                         end
-                        mnorm += max_norm(priors, distro)
+                        mnorm[percentual_observed.to_s] += max_norm(priors, distro)
                     end
 
                     probs[tar] = single_result_ex[:probabilities]
