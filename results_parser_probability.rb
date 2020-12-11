@@ -1,8 +1,7 @@
 require 'json'
 
 def get_method_stats(fname)
-    file_path = "./res.txt"
-    file = File.open(file_path, 'r')
+    file = File.open(fname, 'r')
     raw = file.read
     raw_unsplit = raw.clone
     file.close
