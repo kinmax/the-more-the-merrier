@@ -103,7 +103,7 @@ def all_results(domain, type, distribution)
                     else
                         system("cp #{tar_path} ./")
                         system("ruby problem_generator.rb #{tar} #{distribution} #{number_of_samples} #{percent} #{samples_path} > /dev/null")
-                        system("ruby #{run_path} #{samples_path} #{run_type} > /dev/null")
+                        system("ruby #{run_path} #{samples_path} > /dev/null")
                         system("cp #{samples_path}/original_problem.tar.bz2 ./")
                         system("java -jar probabilistic-recognizer-landmarks0.5.jar original_problem_priors.tar.bz2 > /dev/null")
                         res_file_name = "original_problem.txt"
