@@ -180,8 +180,8 @@ def all_results(domain, type, distribution)
             result[symbol_domain][:spread][p] = (spread[p].to_f)/(counter[p].to_f)
             result[symbol_domain][:observations][p][:time] = ((((seconds[p].to_f/counter[p])*1000).floor)/1000.0)
             result[symbol_domain][:observations][p][:accuracy] = ((accuracy[p].to_f/counter[p]) * 100.0)
-            result[symbol_domain][:best_goal_difference][p] = ((best_goal_difference[p].to_f/counter[p]) * 100.0)
-            result[symbol_domain][:max_norm][p] = ((mnorm[p].to_f/counter[p]) * 100.0)
+            result[symbol_domain][:best_goal_difference][p] = (best_goal_difference[p].to_f/counter[p])
+            result[symbol_domain][:max_norm][p] = (mnorm[p].to_f/counter[p])
         end
     rescue StandardError => e
         puts e.backtrace
