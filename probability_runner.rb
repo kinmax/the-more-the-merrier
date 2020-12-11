@@ -51,7 +51,7 @@ samples.times do |sample|
 end
 
 hyps.each do |hyp|
-    next_priors[hyp] = ((counter[hyp] + k_value).to_f)/((counter.values.sum + (hyps.length * k_value)).to_f)
+    next_priors[hyp] = ((counter[hyp] + k_value).to_f)/((counter.values.reduce(0, :+) + (hyps.length * k_value)).to_f)
 end
 
 File.open("./priors.dat", "w") do |file|
