@@ -99,19 +99,19 @@ def all_results(domain, type, distribution)
                     res_file_name = ""
                     if distribution == "original"
                         system("cp #{tar_path} ./")
-                        system("java -jar probabilistic-recognizer-landmarks0.4.jar #{tar} > /dev/null")
+                        system("java -jar probabilistic-recognizer-landmarks0.5.jar #{tar} > /dev/null")
                         res_file_name = "#{tar.split(".")[0]}.txt"
                     else
                         system("cp #{tar_path} ./")
                         system("ruby problem_generator.rb #{tar} #{distribution} #{number_of_samples} #{percent} #{samples_path} > /dev/null")
                         system("ruby #{run_path} #{samples_path} #{run_type} > /dev/null")
                         system("cp #{samples_path}/original_problem.tar.bz2 ./")
-                        system("java -jar probabilistic-recognizer-landmarks0.4.jar original_problem_priors.tar.bz2 > /dev/null")
+                        system("java -jar probabilistic-recognizer-landmarks0.5.jar original_problem_priors.tar.bz2 > /dev/null")
                         res_file_name = "original_problem.txt"
                         result_original = get_method_stats(res_file_name)
                         system("rm original_problem.tar.bz2 original_problem.txt")
                         system("cp #{samples_path}/original_problem_priors.tar.bz2 ./")
-                        system("java -jar probabilistic-recognizer-landmarks0.4.jar original_problem_priors.tar.bz2 > /dev/null")
+                        system("java -jar probabilistic-recognizer-landmarks0.5.jar original_problem_priors.tar.bz2 > /dev/null")
                         res_file_name = "original_problem_priors.txt"
                     end
                     single_result_ex = get_method_stats(res_file_name)
