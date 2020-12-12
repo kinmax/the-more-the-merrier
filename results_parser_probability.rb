@@ -43,7 +43,7 @@ def max_norm(d1, d2)
 end
 
 def all_results(domain, type, distribution)
-    dataset_path = "./ijcai-09-benchmarks"
+    dataset_path = "../../ijcai-09-benchmarks"
     samples_path = "./samples_#{distribution}"
     res_path = "./res_#{distribution}.txt"
     run_path = "./probability_runner.rb"
