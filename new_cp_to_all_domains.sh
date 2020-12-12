@@ -1,12 +1,12 @@
-cp ./$1 ./blocks-world/original/$1
-cp ./$1 ./blocks-world/one/$1
-cp ./$1 ./blocks-world/normal/$1
-cp ./$1 ./logistics/original/$1
-cp ./$1 ./logistics/one/$1
-cp ./$1 ./logistics/normal/$1
-cp ./$1 ./ipc-grid/original/$1
-cp ./$1 ./ipc-grid/one/$1
-cp ./$1 ./ipc-grid/normal/$1
-cp ./$1 ./intrusion-detection/original/$1
-cp ./$1 ./intrusion-detection/one/$1
-cp ./$1 ./intrusion-detection/normal/$1
+cp -r ./$1 ./blocks-world/original/$1
+cp -r ./$1 ./blocks-world/one/$1
+cp -r ./$1 ./blocks-world/normal/$1
+cp -r ./$1 ./logistics/original/$1
+cp -r ./$1 ./logistics/one/$1
+cp -r ./$1 ./logistics/normal/$1
+cp -r ./$1 ./ipc-grid/original/$1
+cp -r ./$1 ./ipc-grid/one/$1
+cp -r ./$1 ./ipc-grid/normal/$1
+cp -r ./$1 ./intrusion-detection/original/$1
+cp -r ./$1 ./intrusion-detection/one/$1
+cp -r ./$1 ./intrusion-detection/normal/$1
