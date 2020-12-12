@@ -40,7 +40,6 @@ samples.times do |sample|
     output = output_file.read
     output_file.close
     system("rm #{sample_file_name} #{output_path}")
-    # best = probs.first.split("###")[0].strip.downcase
     recognized = output.split("MOST_LIKELY_GOALS:\n")[1].split("\nREAL_GOAL = ")[0].strip.split("\n")
     correct = output.split("CORRECT = ")[1].split("\n")[0] == "true"
     if correct
