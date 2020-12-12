@@ -1,4 +1,4 @@
 blocks-world
 logistics
-ipc-grid
+easy-ipc-grid
 intrusion-detection
