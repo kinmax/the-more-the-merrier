@@ -20,12 +20,31 @@ end
 def normal_distribution(candidates, real_goal)
     probs = {}
     ordered_candidates = order_by_similarity(candidates, real_goal)
-    prob = 0.5
+    prob = candidates.size > 1 ? 0.5 : 1.0
+    left = candidates.size
+    prob_left = 1.to_f
+    final = false
     ordered_candidates.each_with_index do |oc, index|
-        prob = prob/2.to_f if index % 2 == 1
-        split_factor = index == 0 ? 1.to_f : 2.to_f
-        probs[oc] = prob/split_factor
-        probs[oc] += prob/2.to_f if index % 2 == 1 && index == ordered_candidates.length-1
+        if index == 0
+            probs[oc] = prob
+            left -= 1
+            prob_left -= prob
+            next
+        end
+        if left <= 4 && index % 2 == 1 && !final
+            prob = prob_left.to_f/left.to_f
+            final = true
+        end
+        if final
+            probs[oc] = prob
+        else
+            prob = prob/2.to_f if index % 2 == 1
+            split_factor = index == 0 ? 1.to_f : 2.to_f
+            probs[oc] = prob/split_factor
+            probs[oc] += prob/2.to_f if index % 2 == 1 && index == ordered_candidates.length-1
+        end
+        prob_left -= probs[oc]
+        left -= 1       
     end
     probs
 end
