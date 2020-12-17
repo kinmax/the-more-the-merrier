@@ -134,7 +134,7 @@ number_of_samples.times do |i|
     observation_level
     output_path = "#{new_problem_path}/problem.pddl"
     File.write(output_path, problem)    
-    cmd = "python3 ./real-fd/fast-downward.py #{new_problem_path}/domain.pddl #{new_problem_path}/problem.pddl --evaluator \"hff=ff()\" --evaluator \"hcea=cea()\" --search \"lazy_greedy([hff, hcea], preferred=[hff, hcea])\"  > ./output_#{probabilistic_distribution}.txt"
+    cmd = "python3 ./real-fd/fast-downward.py #{new_problem_path}/domain.pddl #{new_problem_path}/problem.pddl --search \"astar(lmcut())\"  > ./output_#{probabilistic_distribution}.txt"
     system(cmd)
     plan_file = File.open("./output_#{probabilistic_distribution}.txt")
     plan = plan_file.read
