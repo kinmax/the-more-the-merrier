@@ -1,3 +1,6 @@
+require 'json'
+require 'byebug'
+
 def capitalized(name)
     ret = ""
     splitname = name.split("-")
@@ -30,7 +33,7 @@ domains.each do |domain|
         file = File.open("./#{domain}/#{distro}/results_#{distro}.json")
         raw = file.read
         file.close
-        hash = JSON.parse(raw)[domain]
+        hash = JSON.parse(raw)[domain.gsub("-", "_")]
         if distro == "original"
             table += "\\makecell{\\sc #{capitalized(domain)} \\\\ (#{hash['problems']})} & #{hash['goals_avg'].round(1)} & #{hash['landmarks_avg'].round(1)} & \\makecell{10\\\\30\\\\50\\\\70\\\\100} & \\makecell{#{hash['observations']['10']['observations_avg'].round(1)}\\\\#{hash['observations']['30']['observations_avg'].round(1)}\\\\#{hash['observations']['50']['observations_avg'].round(1)}\\\\#{hash['observations']['70']['observations_avg'].round(1)}\\\\#{hash['observations']['100']['observations_avg'].round(1)}} & "
         end
