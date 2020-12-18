@@ -47,8 +47,14 @@ domains.each do |domain|
             end
         end
     end
-    table += "\\hline \n"
+    table += "\\hline \n\n"
 end
+
+table += "\\end{tabular}
+    
+\\caption{Experimental results comparing our landmark-based probabilistic model with \\textit{no prior} probability distribution, \\textit{one-shot} recognition, \\textit{normal} probability distribution.}
+\\label{tab:results}
+\\end{table*} \n"
 
 out_file = File.open("./new_table.txt", "w")
 out_file.write(table)
