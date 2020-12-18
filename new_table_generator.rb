@@ -8,6 +8,7 @@ def capitalized(name)
         ret += "-" if i != splitname.size
         ret += s.capitalize
     end
+    ret
 end
 
 domains = %w[blocks-world easy-ipc-grid intrusion-detection logistics]
