@@ -5,7 +5,7 @@ def capitalized(name)
     ret = ""
     splitname = name.split("-")
     splitname.each_with_index do |s,i|
-        ret += "-" if i != splitname.size
+        ret += "-" if i != 0
         ret += s.capitalize
     end
     ret
