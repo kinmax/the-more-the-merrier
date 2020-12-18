@@ -140,6 +140,8 @@ when "normal"
     probabilities = normal_distribution(candidates, real_hyp)
 end
 
+number_of_samples = candidates.size * 5
+
 number_of_samples.times do |i|
     system("tar -xjf #{tar_path}")
     puts "Generating problem #{i}"
