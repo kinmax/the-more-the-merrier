@@ -4,7 +4,6 @@ require 'byebug'
 samples_folder_path = ARGV[0]
 
 k_value = 1
-samples = 10
 
 
 if ARGV.length < 1
@@ -28,6 +27,7 @@ end
 system("rm *.pddl *.dat")
 
 next_priors = {}
+samples = hyps.length * 10
 
 samples.times do |sample|
     puts "Running for sample #{sample}"
