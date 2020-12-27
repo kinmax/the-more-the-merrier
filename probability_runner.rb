@@ -27,7 +27,7 @@ end
 system("rm *.pddl *.dat")
 
 next_priors = {}
-samples = hyps.length * 10
+samples = hyps.uniq.length * 10
 
 samples.times do |sample|
     puts "Running for sample #{sample}"
