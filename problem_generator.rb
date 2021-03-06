@@ -193,6 +193,7 @@ number_of_samples.times do |i|
     system("rm -rf #{new_problem_path}")
     system("mv problem_#{i}.tar.bz2 #{samples_path}")
     system("rm -rf ./problem_#{i}")
+    system("echo #{tar_path.split("/").last} > #{samples_path}/problem_name.txt")
 end
 distribution_string = ""
 probabilities.each do |key, value|
