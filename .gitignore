@@ -35,3 +35,6 @@ real-fd/
 probabilistic-recognizer-landmarks0.5.jar
 ijcai-09-benchmarks/
 getsum.rb
+datasets-aij/
+aij-experiments/
+cp_aij_test.sh
