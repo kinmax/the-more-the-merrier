@@ -25,8 +25,8 @@ Dir.foreach(overtime_path) do |percentage|
         overtime = CSV.parse(overtime_raw)
 
         overtime.each do |overtime_item|
-            counter[overtime_item[0]] += 1
-            overtime_accuracy[overtime_item[0]] += overtime_item[1].to_i
+            counter[overtime_item[0].to_i] += 1
+            overtime_accuracy[overtime_item[0].to_i] += overtime_item[1].to_i
         end
     end
 
