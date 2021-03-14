@@ -18,7 +18,7 @@ Dir.foreach(overtime_path) do |percentage|
 
     Dir.foreach("#{overtime_path}/#{percentage}") do |overtime_file|
         next if overtime_file == ".." || overtime_file == "."
-        over_file = File.open("#{overtime_path}/#{overtime_file}")
+        over_file = File.open("#{overtime_path}/#{percentage}/#{overtime_file}")
         overtime_raw = over_file.read
         over_file.close
 
