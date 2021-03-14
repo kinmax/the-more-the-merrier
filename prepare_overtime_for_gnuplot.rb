@@ -18,7 +18,7 @@ Dir.foreach(overtime_path) do |percentage|
 	next unless percentages.include?(percentage.to_i)
 	csv = CSV.read("#{overtime_path}/#{percentage}/overtime_accuracy.csv")
 	csvs[percentage] = csv
-	number_of_samples = csv.size if csv.size > number_of_samples
+	number_of_samples = csv.size-1 if csv.size > number_of_samples
 end
 
 new_csv = "\"Number of Samples\",\"10%\",\"30%\",\"50%\",\"70%\",\"100%\"\n"
