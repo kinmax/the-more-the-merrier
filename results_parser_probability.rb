@@ -44,7 +44,7 @@ end
 
 def all_results(domain, type, distribution)
     dataset_path = "../../ijcai-09-benchmarks"
-    dataset_path = "../../../datasets-aij"
+    # dataset_path = "../../../datasets-aij"
     samples_path = "./samples_#{distribution}"
     res_path = "./res_#{distribution}.txt"
     run_path = "./probability_runner.rb"
