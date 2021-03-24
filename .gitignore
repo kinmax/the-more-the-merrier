@@ -38,3 +38,5 @@ getsum.rb
 datasets-aij/
 aij-experiments/
 cp_aij_test.sh
+prob-incomplete/prob_recognizer1.0-incomplete_domains.jar
+prob_recognizer1.0-incomplete_domains.jar

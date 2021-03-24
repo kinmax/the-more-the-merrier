@@ -3,14 +3,29 @@ require 'byebug'
 
 samples_folder_path = ARGV[0]
 
+prob_approach = ARGV[1]
+
 k_value = 1
 
 
-if ARGV.length < 1
-    puts "Usage: ruby probability_runner <samples_folder_path>"
+if ARGV.length < 2
+    puts "[ERROR] Usage: ruby probability_runner <samples_folder_path> <prob_approach>"
     exit
 end
 output_path = "./runner_output.txt"
+
+prob_approaches = ['prob-gc-definite', 'prob-gc-definite-possible', 'prob-gc-definite-overlooked',
+              'prob-gc-definite-possible-overlooked', 'prob-gc-possible', 'prob-gc-possible-overlooked',
+              'prob-gc-overlooked', 'prob-uniqueness-definite', 'prob-uniqueness-possible', 'prob-uniqueness-overlooked',
+              'prob-uniqueness-definite-overlooked', 'prob-uniqueness-definite-possible-overlooked', 
+              'prob-uniqueness-possible-definite', 'prob-uniqueness-possible-overlooked']
+
+unless prob_approaches.include?(prob_approach.strip)
+    puts "[ERROR] Invalid probabilistic approach #{prob_apporach}"
+    puts "Possible probabilistic approaches:"
+    puts prob_approaches.join("\n")
+    exit
+end
 
 counter = {}
 
@@ -41,7 +56,7 @@ system("mkdir #{overtime_path}")
 
 overtime_out = ""
 
-cmd = "java -jar probabilistic-recognizer-landmarks0.5.jar #{samples_folder_path}/original_problem.tar.bz2 > /dev/null"
+cmd = "java -jar prob_recognizer1.0-incomplete_domains.jar #{samples_folder_path}/original_problem.tar.bz2 #{prob_apporach} > /dev/null"
 system(cmd)
 
 output_path = "#{samples_folder_path}/original_problem.txt"
@@ -57,7 +72,7 @@ samples.times do |sample|
     puts "Running for sample #{sample}"
     sample_file_name = "problem_#{sample}.tar.bz2"
     system("cp #{samples_folder_path}/#{sample_file_name} ./")
-    cmd = "java -jar probabilistic-recognizer-landmarks0.5.jar #{sample_file_name} > /dev/null"
+    cmd = "java -jar prob_recognizer1.0-incomplete_domains.jar #{sample_file_name} #{prob_apporach} > /dev/null"
     system(cmd)
     output_path = "problem_#{sample}.txt"
     output_file = File.open(output_path)
@@ -87,7 +102,7 @@ samples.times do |sample|
     system("mv ./original_problem_priors.tar.bz2  #{samples_folder_path}/")
     system("rm *.pddl *.dat")
 
-    cmd = "java -jar probabilistic-recognizer-landmarks0.5.jar #{samples_folder_path}/original_problem_priors.tar.bz2 > /dev/null"
+    cmd = "java -jar prob_recognizer1.0-incomplete_domains.jar #{samples_folder_path}/original_problem_priors.tar.bz2 #{prob_apporach} > /dev/null"
     system(cmd)
 
     output_path = "#{samples_folder_path}/original_problem_priors.txt"

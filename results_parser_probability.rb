@@ -52,7 +52,7 @@ def all_results(domain, type, distribution)
     percentages = type == "noisy" ? %w(25 50 75 100).freeze : %w(10 30 50 70 100).freeze
     run_type = "--exhaust"
     number_of_samples = 10
-    runs = 3
+    runs = 1
     samples_path = "./samples_#{distribution}"
     result = {}
     goals = 0
