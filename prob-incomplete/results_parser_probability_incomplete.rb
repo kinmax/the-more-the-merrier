@@ -67,6 +67,7 @@ def all_results(domain, type, distribution)
     number_of_samples = 10
     runs = 3
     samples_path = "./samples_#{distribution}"
+    system("mkdir #{samples_path}")
     result = {}
     goals = 0
     landmarks = 0
