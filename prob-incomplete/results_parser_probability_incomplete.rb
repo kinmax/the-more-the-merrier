@@ -138,7 +138,7 @@ def all_results(domain, type, distribution)
                                     system("ruby problem_generator_incomplete.rb #{tar} #{distribution} #{number_of_samples} #{percent} #{samples_path} #{optimality} #{complete_domain_file} > /dev/null")
                                     system("ruby #{run_path} #{samples_path} #{domain} #{problem_type} #{prob_approach} > /dev/null")
                                     system("cp #{samples_path}/original_problem.tar.bz2 ./")
-                                    system("java -jar probabilistic-recognizer-landmarks0.5.jar original_problem.tar.bz2 > /dev/null")
+                                    system("java -jar prob_recognizer1.0-incomplete_domains.jar original_problem.tar.bz2 #{prob_approach} > /dev/null")
                                     res_file_name = "original_problem.txt"
                                     result_original = get_method_stats(res_file_name)
                                     system("rm original_problem.tar.bz2 original_problem.txt")
