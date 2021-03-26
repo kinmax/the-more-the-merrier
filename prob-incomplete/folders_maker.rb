@@ -9,8 +9,8 @@ domains.each do |domain|
     system("mkdir ./#{domain}/one/probabilities")
     system("mkdir ./#{domain}/one/results")
     
-    system("cp ./prob_recognizer1.0-incomplete_#{domain}s.jar ./#{domain}/normal")
-    system("cp ./prob_recognizer1.0-incomplete_#{domain}s.jar ./#{domain}/one")
+    system("cp ./prob_recognizer1.0-incomplete_domains.jar ./#{domain}/normal")
+    system("cp ./prob_recognizer1.0-incomplete_domains.jar ./#{domain}/one")
     system("cp ./probability_runner_incomplete.rb ./#{domain}/normal")
     system("cp ./probability_runner_incomplete.rb ./#{domain}/one")
     system("cp ./problem_generator_incomplete.rb ./#{domain}/normal")
