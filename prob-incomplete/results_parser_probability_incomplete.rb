@@ -10,6 +10,16 @@ def get_complete_domain_filename(path, domain, tar_name)
     return nil
 end
 
+def get_complete_domain_filename_old_noisy(path, domain, tar_name)
+    split_tar = tar_name.split("_")
+    p = split_tar[2]
+    hyp = split_tar[3] 
+    Dir.foreach(path) do |problem|
+        return "#{path}/#{problem}" if problem.include?("_#{p}_") && problem.include?("_#{hyp}_")
+    end
+    return nil
+end
+
 def get_method_stats(fname)
     file = File.open(fname, 'r')
     raw = file.read
@@ -100,7 +110,7 @@ def all_results(domain, type, distribution)
             result_file_content = "Obs% Accuracy Precision Recall F1-Score Spread Time Max-Norm Delta\n"
             next if problem_type == '.' || problem_type == '..'
             Dir.foreach("#{dataset_path}/#{domain}/#{problem_type}") do |percent|
-                next if problem_type == '.' || problem_type == '..'
+                next unless percentages.include?(percent)
                 spread = 0
                 time = 0
                 accuracy = 0
@@ -116,7 +126,11 @@ def all_results(domain, type, distribution)
                         if tar == "." || tar == ".." || tar == "README.md" || tar == ".gitignore" || tar.include?("FILTERED")
                             next
                         end
-                        complete_domain_file = get_complete_domain_filename("#{dataset_path}/#{domain}/#{domain}-optimal/100", domain, tar)
+                        if problem_type.include?("old-noisy")
+                            complete_domain_file = get_complete_domain_filename_old_noisy("#{dataset_path}/#{domain}/#{domain}-optimal-old-noisy/100", domain, tar)
+                        else
+                            complete_domain_file = get_complete_domain_filename("#{dataset_path}/#{domain}/#{domain}-optimal/100", domain, tar)
+                        end
                         runs.times do |r|
                             puts "#{tar} - approach #{prob_approach} - run #{r}"
 
