@@ -1,6 +1,6 @@
 domains = %w[blocks-world depots driverlog dwr easy-ipc-grid ferry logistics miconic rovers satellite zeno-travel]
 
-domains.each |domain| do
+domains.each do |domain| 
     system("mkdir ./#{domain}")
     system("mkdir ./#{domain}/normal")
     system("mkdir ./#{domain}/one")
