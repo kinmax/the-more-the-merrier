@@ -111,7 +111,7 @@ def all_results(domain, type, distribution)
                 problem_counter = 0
                 optimality = problem_type.include?('-suboptimal') ? 'suboptimal' : 'optimal'
                 if percentages.include?(percent)
-                    Dir.foreach("#{dataset_path}/#{domain}/#{percent}") do |tar|
+                    Dir.foreach("#{dataset_path}/#{domain}/#{problem_type}/#{percent}") do |tar|
                         if tar == "." || tar == ".." || tar == "README.md" || tar == ".gitignore" || tar.include?("FILTERED")
                             next
                         end
@@ -120,7 +120,7 @@ def all_results(domain, type, distribution)
                             puts "#{tar} - approach #{prob_approach} - run #{r}"
 
                             begin
-                                tar_path = "#{dataset_path}/#{domain}/#{percent}/#{tar}"
+                                tar_path = "#{dataset_path}/#{domain}/#{problem_type}/#{percent}/#{tar}"
 
                                 problem_counter = problem_counter + 1
 
