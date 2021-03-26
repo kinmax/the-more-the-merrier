@@ -20,6 +20,7 @@ def get_method_stats(fname)
     spread = raw[3].split(" = ")[1].to_f
     correct = raw[4].split(" = ")[1] == "true" ? 1 : 0
     time = raw[5].split(" = ")[1].to_f/1000.to_f
+    real_goal = raw_unsplit.split("REAL_GOAL = ")[1].strip
 
     probs = raw_unsplit.split("POSTERIOR_PROBABILITIES:\n")[1].split("\nMOST_LIKELY_GOALS")[0].split("\n")
     results = {}
@@ -31,6 +32,7 @@ def get_method_stats(fname)
     results[:correct] = correct
     results[:time] = time
     results[:spread] = spread
+    results[:real_goal] = real_goal
 
     results[:tp] = correct
     results[:fn] = (correct-1).abs
@@ -94,7 +96,7 @@ def all_results(domain, type, distribution)
         Dir.foreach("#{dataset_path}/#{domain}") do |problem_type|
             split_problem_type = problem_type.split("-")
             incompleteness =  ["20", "40" "60", "80"].include?(split_problem_type.last) ? "100" : split_problem_type.last
-            result_file_content = "Obs% Accuracy Precision Recall F1-Score Spread Time\n"
+            result_file_content = "Obs% Accuracy Precision Recall F1-Score Spread Time Max-Norm Delta\n"
             next if problem_type == '.' || problem_type == '..'
             Dir.foreach("#{dataset_path}/#{domain}/#{problem_type}") do |percent|
                 next if problem_type == '.' || problem_type == '..'
@@ -105,6 +107,7 @@ def all_results(domain, type, distribution)
                 fp = 0
                 tn = 0
                 fn = 0
+                best_goal_difference = 0
                 problem_counter = 0
                 optimality = problem_type.include?('-suboptimal') ? 'suboptimal' : 'optimal'
                 if percentages.include?(percent)
@@ -133,7 +136,12 @@ def all_results(domain, type, distribution)
                                 else
                                     system("cp #{tar_path} ./")
                                     system("ruby problem_generator_incomplete.rb #{tar} #{distribution} #{number_of_samples} #{percent} #{samples_path} #{optimality} #{complete_domain_file} > /dev/null")
-                                    system("ruby #{run_path} #{samples_path} > /dev/null")
+                                    system("ruby #{run_path} #{samples_path} #{domain} #{problem_type} #{prob_approach} > /dev/null")
+                                    system("cp #{samples_path}/original_problem.tar.bz2 ./")
+                                    system("java -jar probabilistic-recognizer-landmarks0.5.jar original_problem.tar.bz2 > /dev/null")
+                                    res_file_name = "original_problem.txt"
+                                    result_original = get_method_stats(res_file_name)
+                                    system("rm original_problem.tar.bz2 original_problem.txt")
                                     system("cp #{samples_path}/original_problem_priors.tar.bz2 ./")
                                     system("java -jar prob_recognizer1.0-incomplete_domains.jar original_problem_priors.tar.bz2 #{prob_approach} > /dev/null")
                                     res_file_name = "original_problem_priors.txt"
@@ -154,6 +162,26 @@ def all_results(domain, type, distribution)
                                     fp += single_result_ex[:fp]
                                     tn += single_result_ex[:tn]
                                     fn += single_result_ex[:fn]
+
+                                    if distribution != "original" # has to verify max_norm of prior distribution vs real distribution and difference between probabilities for real goal
+                                        best_goal_difference += single_result_ex[:probabilities][single_result_ex[:real_goal]] - result_original[:probabilities][result_original[:real_goal]]
+                                        system("tar -xjf #{samples_path}/original_problem_priors.tar.bz2")
+                                        priors_file = File.open("priors.dat")
+                                        raw_priors = priors_file.read.strip
+                                        priors_file.close
+                                        distro_file = File.open("#{samples_path}/distribution.txt")
+                                        raw_distro = distro_file.read.strip
+                                        distro_file.close
+                                        priors = {}
+                                        distro = {}
+                                        raw_priors.split("\n").each do |p|
+                                            priors[p.split(" = ")[0]] = p.split(" = ")[1].to_f
+                                        end
+                                        raw_distro.split("\n").each do |d|
+                                            distro[d.split(" = ")[0]] = d.split(" = ")[1].to_f
+                                        end
+                                        mnorm += max_norm(priors, distro)
+                                    end
                                 end
 
                                 time += single_result_ex[:time]
@@ -169,6 +197,8 @@ def all_results(domain, type, distribution)
                 time = time.to_f/problem_counter.to_f
                 spread = spread.to_f/problem_counter.to_f
                 accuracy = accuracy.to_f/problem_counter.to_f
+                best_goal_difference = best_goal_difference.to_f/problem_counter.to_f
+                mnorm = mnorm.to_f/problem_counter.to_f
                 tp = tp.to_f/problem_counter.to_f
                 tn = tn.to_f/problem_counter.to_f
                 fp = fp.to_f/problem_counter.to_f
@@ -176,7 +206,7 @@ def all_results(domain, type, distribution)
                 precision = tp.to_f/(tp.to_f + fp.to_f).to_f
                 recall = tp.to_f/(tp.to_f + fn.to_f).to_f
                 f1_score = (2.to_f * recall.to_f * precision.to_f)/(recall.to_f + precision.to_f)
-                result_file_content += "#{percent} #{accuracy.round(3)} #{precision.round(3)} #{recall.round(3)} #{f1_score.round(3)} #{spread.round(3)} #{time.round(3)}\n"
+                result_file_content += "#{percent} #{accuracy.round(3)} #{precision.round(3)} #{recall.round(3)} #{f1_score.round(3)} #{spread.round(3)} #{time.round(3)} #{mnorm.round(3)} #{best_goal_difference.round(3)}\n"
             end
             result_file_name = "#{domain}-#{optimality}-#{incompleteness}-incompleteness-goalrecognition-prob-#{prob_approach.split('-').drop(1).join('_')}_landmarks.txt"
             File.open("./results/#{result_file_name}", 'w') { |file| file.write(result_file_content) }

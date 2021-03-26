@@ -3,16 +3,38 @@ require 'byebug'
 
 samples_folder_path = ARGV[0]
 
-prob_approach = ARGV[1]
+domain = ARGV[1]
+
+problem_type = ARGV[2]
+
+prob_approach = ARGV[3]
 
 k_value = 1
 
 
-if ARGV.length < 2
-    puts "[ERROR] Usage: ruby probability_runner <samples_folder_path> <prob_approach>"
+if ARGV.length < 4
+    puts "[ERROR] Usage: ruby probability_runner <samples_folder_path> <domain> <problem_type> <prob_approach>"
     exit
 end
 output_path = "./runner_output.txt"
+
+problem_types = ["#{domain}-optimal-noisy", "#{domain}-optimal-noisy-80", "#{domain}-optimal-old-noisy-20", 
+                 "#{domain}-suboptimal-old-noisy", "#{domain}-optimal", "#{domain}-suboptimal-noisy-20", 
+                 "#{domain}-optimal-noisy-20", "#{domain}-suboptimal-noisy-80", "#{domain}-suboptimal-80", 
+                 "#{domain}-optimal-20", "#{domain}-suboptimal-40", "#{domain}-suboptimal-old-noisy-40", 
+                 "#{domain}-optimal-noisy-40", "#{domain}-suboptimal-60", "#{domain}-suboptimal-old-noisy-80", 
+                 "#{domain}-suboptimal-old-noisy-20", "#{domain}-optimal-old-noisy-60", "#{domain}-suboptimal-20", 
+                 "#{domain}-suboptimal-old-noisy-60", "#{domain}-suboptimal-noisy-40", "#{domain}-optimal-80", 
+                 "#{domain}-optimal-60", "#{domain}-suboptimal-noisy-60", "#{domain}-optimal-old-noisy-80", 
+                 "#{domain}-suboptimal-noisy", "#{domain}-optimal-old-noisy-40", "#{domain}-suboptimal", 
+                 "#{domain}-optimal-40", "#{domain}-optimal-noisy-60", "#{domain}-optimal-old-noisy"]
+
+if problem_types.exclude?("#{problem_type}")
+    puts "[ERROR] Invalid problem type #{problem_type}"
+    puts "Possible problem types:"
+    puts problem_types.join("\n")
+    exit
+end
 
 prob_approaches = ['prob-gc-definite', 'prob-gc-definite-possible', 'prob-gc-definite-overlooked',
               'prob-gc-definite-possible-overlooked', 'prob-gc-possible', 'prob-gc-possible-overlooked',
@@ -54,7 +76,14 @@ overtime_path = "./overtime"
 
 system("mkdir #{overtime_path}")
 
-overtime_out = ""
+overtime_path = "./overtime/#{problem_type}"
+
+system("mkdir #{overtime_path}")
+
+overtime_path = "./overtime/#{problem_type}/#{prob_approach}"
+
+system("mkdir #{overtime_path}")
+
 
 cmd = "java -jar prob_recognizer1.0-incomplete_domains.jar #{samples_folder_path}/original_problem.tar.bz2 #{prob_apporach} > /dev/null"
 system(cmd)
