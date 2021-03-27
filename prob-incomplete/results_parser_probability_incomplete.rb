@@ -75,7 +75,7 @@ def all_results(domain, type, distribution)
               'prob-uniqueness-definite-overlooked', 'prob-uniqueness-definite-possible-overlooked', 
               'prob-uniqueness-possible-definite', 'prob-uniqueness-possible-overlooked']
     number_of_samples = 10
-    runs = 3
+    runs = 1
     samples_path = "./samples_#{distribution}"
     system("mkdir #{samples_path}")
     result = {}
@@ -108,7 +108,7 @@ def all_results(domain, type, distribution)
             split_problem_type = problem_type.split("-")
             incompleteness =  ["20", "40" "60", "80"].include?(split_problem_type.last) ? "100" : split_problem_type.last
             result_file_content = "Obs% Accuracy Precision Recall F1-Score Spread Time Max-Norm Delta\n"
-            next if problem_type == '.' || problem_type == '..'
+            next if problem_type == '.' || problem_type == '..' || problem_type.include?('noisy')
             Dir.foreach("#{dataset_path}/#{domain}/#{problem_type}") do |percent|
                 next unless percentages.include?(percent)
                 spread = 0
@@ -126,11 +126,7 @@ def all_results(domain, type, distribution)
                         if tar == "." || tar == ".." || tar == "README.md" || tar == ".gitignore" || tar.include?("FILTERED")
                             next
                         end
-                        if problem_type.include?("old-noisy")
-                            complete_domain_file = get_complete_domain_filename_old_noisy("#{dataset_path}/#{domain}/#{domain}-optimal-old-noisy/100", domain, tar)
-                        else
-                            complete_domain_file = get_complete_domain_filename("#{dataset_path}/#{domain}/#{domain}-optimal/100", domain, tar)
-                        end
+                        complete_domain_file = get_complete_domain_filename("#{dataset_path}/#{domain}/#{domain}-optimal/100", domain, tar)
                         runs.times do |r|
                             puts "#{tar} - approach #{prob_approach} - run #{r}"
 
