@@ -50,7 +50,7 @@ average.each_with_index do |line, line_index|
     next if line_index == 0
     average[line_index][0] = line_index-1 
     line.each_with_index do |item, row_index|
-        byebug
+        #byebug
         next if row_index == 0
         average[line_index][row_index] = average[line_index][row_index].to_f/total[line_index][row_index].to_f
     end
