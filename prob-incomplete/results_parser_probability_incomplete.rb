@@ -10,16 +10,6 @@ def get_complete_domain_filename(path, domain, tar_name)
     return nil
 end
 
-def get_complete_domain_filename_old_noisy(path, domain, tar_name)
-    split_tar = tar_name.split("_")
-    p = split_tar[2]
-    hyp = split_tar[3] 
-    Dir.foreach(path) do |problem|
-        return "#{path}/#{problem}" if problem.include?("_#{p}_") && problem.include?("_#{hyp}_")
-    end
-    return nil
-end
-
 def get_method_stats(fname)
     file = File.open(fname, 'r')
     raw = file.read
@@ -61,19 +51,23 @@ def max_norm(d1, d2)
     return max
 end
 
-def all_results(domain, type, distribution)
+def all_results(domain, distribution)
     dataset_path = "../../../datasets-aij"
     samples_path = "./samples_#{distribution}"
     res_path = "./res_#{distribution}.txt"
     run_path = "./probability_runner_incomplete.rb"
     thresholds = %w(0).freeze
-    percentages = type == "noisy" ? %w(25 50 75 100).freeze : %w(10 30 50 70 100).freeze
+    percentages = %w(10 30 50 70 100).freeze
     run_type = "--exhaust"
-    prob_approaches = ['prob-gc-definite', 'prob-gc-definite-possible', 'prob-gc-definite-overlooked',
-              'prob-gc-definite-possible-overlooked', 'prob-gc-possible', 'prob-gc-possible-overlooked',
-              'prob-gc-overlooked', 'prob-uniqueness-definite', 'prob-uniqueness-possible', 'prob-uniqueness-overlooked',
-              'prob-uniqueness-definite-overlooked', 'prob-uniqueness-definite-possible-overlooked', 
-              'prob-uniqueness-possible-definite', 'prob-uniqueness-possible-overlooked']
+
+    problem_types = ["#{domain}-optimal", "#{domain}-suboptimal-80", 
+        "#{domain}-optimal-20", "#{domain}-suboptimal-40", "#{domain}-suboptimal-60", "#{domain}-suboptimal-20", "#{domain}-optimal-80", 
+        "#{domain}-optimal-60", "#{domain}-suboptimal", 
+        "#{domain}-optimal-40"]
+
+    prob_approaches = ["prob-#{heuristic}-definite", "prob-#{heuristic}-definite-possible", "prob-#{heuristic}-definite-overlooked",
+              "prob-#{heuristic}-definite-possible-overlooked", "prob-#{heuristic}-possible", "prob-#{heuristic}-possible-overlooked",
+              "prob-#{heuristic}-overlooked"]
     number_of_samples = 10
     runs = 1
     samples_path = "./samples_#{distribution}"
@@ -120,6 +114,7 @@ def all_results(domain, type, distribution)
                 fn = 0
                 best_goal_difference = 0
                 problem_counter = 0
+                mnorm = 0
                 optimality = problem_type.include?('-suboptimal') ? 'suboptimal' : 'optimal'
                 if percentages.include?(percent)
                     Dir.foreach("#{dataset_path}/#{domain}/#{problem_type}/#{percent}") do |tar|
@@ -226,13 +221,13 @@ def all_results(domain, type, distribution)
     probs
 end
 
-def analyse(domain, type, distribution)
-    results = all_results(domain, type, distribution)
+def analyse(domain, heuristic, distribution)
+    results = all_results(domain, heuristic, distribution)
     probs_path = "./probabilities/probabilities_#{distribution}.json"
     File.write(probs_path, JSON.pretty_generate(results))
 end
 
 domain = ARGV[0]
 distribution = ARGV[1]
-type = ARGV[2]
-analyse(domain, type, distribution)
+heuristic = ARGV[2]
+analyse(domain, heuristic, distribution)

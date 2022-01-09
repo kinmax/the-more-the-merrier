@@ -52,7 +52,7 @@ average.each_with_index do |line, line_index|
     line.each_with_index do |item, row_index|
         #byebug
         next if row_index == 0
-        average[line_index][row_index] = average[line_index][row_index].to_f/total[line_index][row_index].to_f
+        average[line_index][row_index] = average[line_index][row_index].to_f/4.to_f
     end
 end
 
